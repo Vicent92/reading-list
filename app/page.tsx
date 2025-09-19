@@ -1,25 +1,32 @@
-// import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, ExternalLink, Plus, Trash2 } from "lucide-react"
+import { BookOpen, ExternalLink, Trash2 } from "lucide-react"
+import { ArticleForm } from "@/components/article-form"
+import { turso } from "@/db/clientTurso"
+import { deleteArticle } from "@/app/actions"
 
 interface Article {
-  id: string
+  id: number
   title: string
   url: string
   description: string
   dateAdded: string
 }
 
+async function getArticles() {
+  try {
+    const res = await fetch(`${process.env.DOMAIN_URL}api/article`)
+    const json = await res.json()
+    return json
+  } catch (e) {
+    console.error(e)
+    return []
+  }
+}
+
 export default async function ReadingListApp() {
-  const res = await fetch(`${process.env.DOMAIN_URL}api/article`)
-  const dataArticles: Article[] = await res.json()
-
-
+  const dataArticles: Article[] = await getArticles()
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,51 +40,7 @@ export default async function ReadingListApp() {
           <p className="text-muted-foreground text-balance">Guarda artículos interesantes para leer más tarde</p>
         </div>
 
-        {/* Form */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5" />
-              Agregar Nuevo Artículo
-            </CardTitle>
-            <CardDescription>Completa los campos para guardar un artículo en tu lista</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Nombre del artículo *</Label>
-                  <Input
-                    id="title"
-                    placeholder="Ej: Cómo mejorar la productividad"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="url">Enlace del artículo *</Label>
-                  <Input
-                    id="url"
-                    type="url"
-                    placeholder="https://ejemplo.com/articulo"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Descripción</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Breve descripción o notas sobre el artículo..."
-                  rows={3}
-                />
-              </div>
-              <Button type="submit" className="w-full md:w-auto">
-                <Plus className="h-4 w-4 mr-2" />
-                Agregar Artículo
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        <ArticleForm />
 
         {/* Articles List */}
         <div className="space-y-4">
@@ -110,7 +73,7 @@ export default async function ReadingListApp() {
                           <p className="text-muted-foreground mb-3 text-pretty">{article.description}</p>
                         )}
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span>Agregado: {article.dateAdded}</span>
+                          <span>Agregado: {new Date(article.dateAdded).toLocaleDateString()}</span>
                           <a
                             href={article.url}
                             target="_blank"
@@ -122,13 +85,16 @@ export default async function ReadingListApp() {
                           </a>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <form action={deleteArticle.bind(null, article.id.toString())}>
+                        <Button
+                          type="submit"
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </form>
                     </div>
                   </CardContent>
                 </Card>
@@ -136,6 +102,7 @@ export default async function ReadingListApp() {
             </div>
           )}
         </div>
+        
       </div>
     </div>
   )
