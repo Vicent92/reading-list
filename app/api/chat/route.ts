@@ -9,28 +9,28 @@ import {
 import z from "zod";
 import { turso } from "@/db/clientTurso";
 import { chromium } from "playwright";
-import { createClient } from "@/lib/supabase/server";
+// import { createClient } from "@/lib/supabase/server";
 
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
   // Validar que el usuario esté autenticado
-  const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
+  // const supabase = await createClient()
+  // const { data: { user }, error } = await supabase.auth.getUser()
 
-  if (error || !user) {
-    return new Response(JSON.stringify({
-      message: 'No autorizado'
-    }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    })
-  }
+  // if (error || !user) {
+  //   return new Response(JSON.stringify({
+  //     message: 'No autorizado'
+  //   }), {
+  //     status: 401,
+  //     headers: { 'Content-Type': 'application/json' }
+  //   })
+  // }
 
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   const result = streamText({
-    model: google("gemini-2.5-pro"),
+    model: google("gemini-2.5-flash"),
     messages: convertToModelMessages(messages),
     stopWhen: stepCountIs(5),
     tools: {

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { BookOpen, ExternalLink, Trash2, LogOut } from "lucide-react"
 import { ArticleForm } from "@/components/article-form"
 import { turso } from "@/db/clientTurso"
-import { deleteArticle, logoutUser } from "@/app/actions"
+import { deleteArticle } from "@/app/actions"
 import { cookies } from "next/headers"
 
 interface Article {
@@ -38,7 +38,7 @@ async function getArticles() {
 
 export default async function ReadingListApp() {
   const dataArticles: Article[] = await getArticles()
-console.log(dataArticles)
+// console.log(dataArticles)
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -57,12 +57,12 @@ console.log(dataArticles)
                 IA Chat
               </Button>
             </Link>
-            <form action={logoutUser}>
+            {/*<form action={logoutUser}>
               <Button variant="outline" type="submit" className="gap-2">
                 <LogOut className="h-4 w-4" />
                 Cerrar Sesión
               </Button>
-            </form>
+            </form>*/}
           </div>
         </div>
 

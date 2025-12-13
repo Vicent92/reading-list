@@ -4,28 +4,28 @@ import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { createClient } from '@/lib/supabase/server'
+// import { createClient } from '@/lib/supabase/server'
 
 const articleSchema = z.object({
   title: z.string().min(1, { message: 'El título es requerido' }),
-  url: z.url({ message: 'Por favor ingrese una URL válida' }),
+  url: z.string({ message: 'Por favor ingrese una URL válida' }),
   description: z.string().optional(),
 })
 
-const loginSchema = z.object({
-  email: z.email({ message: 'Por favor ingrese un correo válido' }),
-  password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
-})
+// const loginSchema = z.object({
+//   email: z.email({ message: 'Por favor ingrese un correo válido' }),
+//   password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
+// })
 
-const registerSchema = z.object({
-  name: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
-  email: z.email({ message: 'Por favor ingrese un correo válido' }),
-  password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Las contraseñas no coinciden',
-  path: ['confirmPassword'],
-})
+// const registerSchema = z.object({
+//   name: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
+//   email: z.email({ message: 'Por favor ingrese un correo válido' }),
+//   password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
+//   confirmPassword: z.string(),
+// }).refine((data) => data.password === data.confirmPassword, {
+//   message: 'Las contraseñas no coinciden',
+//   path: ['confirmPassword'],
+// })
 
 export async function createArticle(prevState: any, formData: FormData) {
   const validatedFields = articleSchema.safeParse({
@@ -99,113 +99,113 @@ export async function deleteArticle(id: string) {
   }
 }
 
-export async function loginUser(prevState: any, formData: FormData) {
-  const validatedFields = loginSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  })
+// export async function loginUser(prevState: any, formData: FormData) {
+//   const validatedFields = loginSchema.safeParse({
+//     email: formData.get('email'),
+//     password: formData.get('password'),
+//   })
 
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-    }
-  }
+//   if (!validatedFields.success) {
+//     return {
+//       errors: validatedFields.error.flatten().fieldErrors,
+//     }
+//   }
 
-  try {
-    const supabase = await createClient()
+//   try {
+//     const supabase = await createClient()
     
-    const { email, password } = validatedFields.data
+//     const { email, password } = validatedFields.data
     
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    })
+//     const { data, error } = await supabase.auth.signInWithPassword({
+//       email,
+//       password
+//     })
 
-    if (error) {
-      return {
-        message: error.message || 'Credenciales inválidas',
-        success: false,
-      }
-    }
+//     if (error) {
+//       return {
+//         message: error.message || 'Credenciales inválidas',
+//         success: false,
+//       }
+//     }
 
-    // Redirigir a la página principal después de un login exitoso
-    redirect('/')
-  } catch (e) {
-    console.error({ message: 'Error al iniciar sesión', error: e })
-    return {
-      message: 'Error al iniciar sesión',
-      success: false,
-    }
-  }
-}
+//     // Redirigir a la página principal después de un login exitoso
+//     redirect('/')
+//   } catch (e) {
+//     console.error({ message: 'Error al iniciar sesión', error: e })
+//     return {
+//       message: 'Error al iniciar sesión',
+//       success: false,
+//     }
+//   }
+// }
 
-export async function logoutUser() {
-  try {
-    const supabase = await createClient()
-    const { error } = await supabase.auth.signOut()
+// export async function logoutUser() {
+//   try {
+//     const supabase = await createClient()
+//     const { error } = await supabase.auth.signOut()
 
-    if (error) {
-      console.error('Error al cerrar sesión:', error)
-      return {
-        message: error.message || 'Error al cerrar sesión',
-        success: false,
-      }
-    }
+//     if (error) {
+//       console.error('Error al cerrar sesión:', error)
+//       return {
+//         message: error.message || 'Error al cerrar sesión',
+//         success: false,
+//       }
+//     }
 
-    // Redirigir a login después de cerrar sesión
-    redirect('/login')
-  } catch (e) {
-    console.error({ message: 'Error al cerrar sesión', error: e })
-    return {
-      message: 'Error al cerrar sesión',
-      success: false,
-    }
-  }
-}
+//     // Redirigir a login después de cerrar sesión
+//     redirect('/login')
+//   } catch (e) {
+//     console.error({ message: 'Error al cerrar sesión', error: e })
+//     return {
+//       message: 'Error al cerrar sesión',
+//       success: false,
+//     }
+//   }
+// }
 
-export async function registerUser(prevState: any, formData: FormData) {
-  const validatedFields = registerSchema.safeParse({
-    name: formData.get('name'),
-    email: formData.get('email'),
-    password: formData.get('password'),
-    confirmPassword: formData.get('confirmPassword'),
-  })
+// export async function registerUser(prevState: any, formData: FormData) {
+//   const validatedFields = registerSchema.safeParse({
+//     name: formData.get('name'),
+//     email: formData.get('email'),
+//     password: formData.get('password'),
+//     confirmPassword: formData.get('confirmPassword'),
+//   })
 
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-    }
-  }
+//   if (!validatedFields.success) {
+//     return {
+//       errors: validatedFields.error.flatten().fieldErrors,
+//     }
+//   }
 
-  try {
-    const supabase = await createClient()
+//   try {
+//     const supabase = await createClient()
   
-    const { name, email, password } = validatedFields.data
+//     const { name, email, password } = validatedFields.data
     
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: name
-        }
-      }
-    })
+//     const { data, error } = await supabase.auth.signUp({
+//       email,
+//       password,
+//       options: {
+//         data: {
+//           full_name: name
+//         }
+//       }
+//     })
 
-    if (error) {
-      return {
-        message: error.message || 'Error al registrar el usuario',
-        success: false,
-      }
-    }
+//     if (error) {
+//       return {
+//         message: error.message || 'Error al registrar el usuario',
+//         success: false,
+//       }
+//     }
 
-    // Redirigir a login después de un registro exitoso
-    redirect('/login')
-  } catch (e) {
-    console.error({ message: 'Error al registrar el usuario', error: e })
-    return {
-      message: 'Error al registrar el usuario',
-      success: false,
-    }
-  }
-}
+//     // Redirigir a login después de un registro exitoso
+//     redirect('/login')
+//   } catch (e) {
+//     console.error({ message: 'Error al registrar el usuario', error: e })
+//     return {
+//       message: 'Error al registrar el usuario',
+//       success: false,
+//     }
+//   }
+// }

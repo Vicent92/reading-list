@@ -7,15 +7,15 @@ import { ArrowLeft, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { ChatBotDemo } from "./components/ai-chat-elements";
-import { logoutUser } from "@/app/actions";
+// import { logoutUser } from "@/app/actions";
 
 export default function Chat() {
   const [input, setInput] = useState("");
   const { messages, sendMessage } = useChat();
 
-  const handleLogout = async () => {
-    await logoutUser();
-  };
+  // const handleLogout = async () => {
+  //   await logoutUser();
+  // };
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
@@ -26,10 +26,10 @@ export default function Chat() {
             Volver a la lista de lectura
           </Button>
         </Link>
-        <Button variant="outline" onClick={handleLogout} className="gap-2">
+        {/*<Button variant="outline" onClick={handleLogout} className="gap-2">
           <LogOut className="h-4 w-4" />
           Cerrar Sesión
-        </Button>
+        </Button>*/}
       </div>
       <div className="flex-1 overflow-hidden">
         <ChatBotDemo />
